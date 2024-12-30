@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpHeaders
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -20,6 +21,10 @@ class DummyControllerTest {
 
         mvc.perform(MockMvcRequestBuilders.get("/api/dummy"))
             .andExpect(MockMvcResultMatchers.status().isForbidden)
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/dummy")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer token"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
 
         mvc.perform(MockMvcRequestBuilders.get("/actuator/health"))
             .andExpect(MockMvcResultMatchers.status().isOk)

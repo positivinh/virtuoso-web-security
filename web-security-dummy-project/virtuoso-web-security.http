@@ -8,6 +8,17 @@ GET http://localhost:8080/api/dummy
     });
 %}
 
+### GET dummy
+
+GET http://localhost:8080/api/dummy
+Authorization: Bearer token
+
+> {%
+    client.test("Request forbidden successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
 ### GET actuator
 
 GET http://localhost:8080/actuator/health

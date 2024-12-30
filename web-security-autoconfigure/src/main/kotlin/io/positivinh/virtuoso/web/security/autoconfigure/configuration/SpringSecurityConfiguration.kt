@@ -1,5 +1,7 @@
 package io.positivinh.virtuoso.web.security.autoconfigure.configuration
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -8,9 +10,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.access.intercept.AuthorizationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.OncePerRequestFilter
 
 /**
  * Spring security configuration
@@ -32,13 +36,16 @@ class SpringSecurityConfiguration {
     @Bean
     fun securityFilterChain(
         http: HttpSecurity,
-        endpointAuthorizationConfigurationProperties: EndpointAuthorizationConfigurationProperties
+        endpointAuthorizationConfigurationProperties: EndpointAuthorizationConfigurationProperties,
+        @Autowired(required = false) @Qualifier("authorizationFilter") authorizationFilter: OncePerRequestFilter?
     ): SecurityFilterChain {
 
         http {
 
+            // csrf
             csrf { disable() }
 
+            // endpoint authorizations
             authorizeHttpRequests {
 
                 endpointAuthorizationConfigurationProperties.permitAll.forEach {
@@ -56,7 +63,9 @@ class SpringSecurityConfiguration {
 
                 authorize(anyRequest, authenticated)
             }
-//            addFilterBefore<UsernamePasswordAuthenticationFilter>(authorizationTokenFilter)
+
+            // authentication filter
+            authorizationFilter?.let { addFilterAt<AuthorizationFilter>(it) }
         }
 
         return http.build()
