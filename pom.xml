@@ -5,15 +5,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.positivinh.software-factory</groupId>
-        <artifactId>software-factory-spring-boot-parent</artifactId>
+        <groupId>io.positivinh.virtuoso</groupId>
+        <artifactId>virtuoso-spring-boot-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
-    <groupId>io.positivinh.software-factory.web</groupId>
-    <artifactId>software-factory-web-security</artifactId>
+    <groupId>io.positivinh.virtuoso.web</groupId>
+    <artifactId>virtuoso-web-security</artifactId>
     <description>Software factory components for web security</description>
     <packaging>pom</packaging>
+
+    <modules>
+        <module>web-security-autoconfigure</module>
+        <module>web-security-starter</module>
+        <module>web-security-dummy-project</module>
+    </modules>
 
 </project>
