@@ -68,14 +68,17 @@ class SpringSecurityConfiguration {
      * See [Reference documentation](https://docs.spring.io/spring-security/reference/reactive/integrations/cors.html)
      */
     @Bean
-    fun corsConfigurationSource(): CorsConfigurationSource {
+    fun corsConfigurationSource(corsConfigurationProperties: CorsConfigurationProperties): CorsConfigurationSource {
 
         val corsConfiguration = CorsConfiguration()
-        corsConfiguration.allowedOrigins = listOf("*")
-        corsConfiguration.allowedMethods = listOf("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH")
+        corsConfiguration.allowedOrigins = corsConfigurationProperties.allowedOrigins
+        corsConfiguration.allowedMethods = corsConfigurationProperties.allowedMethods
+        corsConfiguration.allowedHeaders = corsConfigurationProperties.allowedHeaders
+        corsConfiguration.exposedHeaders = corsConfigurationProperties.exposedHeaders
+        corsConfiguration.allowCredentials = corsConfigurationProperties.allowCredentials
 
         val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", corsConfiguration)
+        source.registerCorsConfiguration(corsConfigurationProperties.pattern, corsConfiguration)
 
         return source
     }
