@@ -1,0 +1,43 @@
+### GET dummy
+
+GET http://localhost:8080/api/dummy
+
+> {%
+    client.test("Request forbidden successfully", function () {
+        client.assert(response.status === 403, "Response status is not 403");
+    });
+%}
+
+### GET dummy
+
+GET http://localhost:8080/api/dummy
+Authorization: Bearer token
+
+> {%
+    client.test("Request forbidden successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### GET actuator
+
+GET http://localhost:8080/actuator/health
+
+> {%
+    client.test("Request executed successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.status === "UP", "Response does not contain expected element")
+    });
+%}
+
+<> 2024-12-30T171037.200.json
+
+### POST actuator
+
+POST http://localhost:8080/actuator/health
+
+> {%
+    client.test("Request forbidden successfully", function () {
+        client.assert(response.status === 403, "Response status is not 403");
+    });
+%}
