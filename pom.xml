@@ -22,4 +22,25 @@
         <module>web-security-dummy-project</module>
     </modules>
 
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub positivinh Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/positivinh/virtuoso</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub positivinh Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/positivinh/virtuoso-web-security</url>
+        </repository>
+    </distributionManagement>
 </project>
