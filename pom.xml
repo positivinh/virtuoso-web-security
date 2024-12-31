@@ -26,7 +26,7 @@
         <repository>
             <id>github</id>
             <name>GitHub positivinh Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/positivinh/virtuoso</url>
+            <url>https://maven.pkg.github.com/positivinh/*</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
