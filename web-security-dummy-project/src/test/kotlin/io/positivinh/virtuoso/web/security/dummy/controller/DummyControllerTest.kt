@@ -32,4 +32,16 @@ class DummyControllerTest {
         mvc.perform(MockMvcRequestBuilders.post("/actuator/health"))
             .andExpect(MockMvcResultMatchers.status().isForbidden)
     }
+
+    @Test
+    fun endpointSecuredByPermission() {
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/dummy/with-permission/ok")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer token"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/dummy/with-permission/nok")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer token"))
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
+    }
 }
