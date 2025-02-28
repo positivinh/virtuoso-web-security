@@ -3,6 +3,7 @@ package io.positivinh.virtuoso.web.security.dummy.filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component("appAuthorizationFilter")
+@ConditionalOnProperty(value = ["dummy.authorization.filter.enabled"], havingValue = "true", matchIfMissing = true)
 class AuthorizationFilter : OncePerRequestFilter() {
 
     override fun doFilterInternal(

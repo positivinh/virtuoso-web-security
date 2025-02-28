@@ -4,23 +4,17 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.FilterType
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 @SpringBootTest
-@ComponentScan(
-    excludeFilters = [ComponentScan.Filter(
-        type = FilterType.ASSIGNABLE_TYPE,
-        classes = [AuthorizationFilter::class]
-    )]
-)
+//@Import(TestConfig::class)
 @TestPropertySource(
     properties = [
-        "debug=true"
+        "debug=true",
+        "dummy.authorization.filter.enabled=false"
     ]
 )
 @AutoConfigureMockMvc
@@ -64,3 +58,12 @@ class DefaultAuthorizationFilterTest {
             .andExpect(MockMvcResultMatchers.status().isForbidden)
     }
 }
+
+//@TestConfiguration
+//@ComponentScan(
+//    excludeFilters = [ComponentScan.Filter(
+//        type = FilterType.ASSIGNABLE_TYPE,
+//        classes = [AuthorizationFilter::class]
+//    )]
+//)
+//class TestConfig {}

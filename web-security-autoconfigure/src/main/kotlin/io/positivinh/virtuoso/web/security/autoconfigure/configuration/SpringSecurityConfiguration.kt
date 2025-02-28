@@ -73,13 +73,16 @@ class SpringSecurityConfiguration {
                 authorize(anyRequest, authenticated)
             }
 
-            // authentication filters
-            authorizationFilter?.let {
-                addFilterAt<AuthorizationFilter>(it)
-            }
-                .also { log.info("Registering Authorization Filter [{}]", it) }
+            // authentication filter
+            if (authorizationFilter != null) {
+                addFilterAt<AuthorizationFilter>(authorizationFilter)
+                log.info("Registering Authorization Filter [{}]", authorizationFilter)
+            } else {
+                addFilterAt<AuthorizationFilter>(virtuosoHeaderAuthorizationFilter)
+                log.info("Registering Virtuoso header authorization filter [{}]", virtuosoHeaderAuthorizationFilter)
 
-            addFilterAt<AuthorizationFilter>(virtuosoHeaderAuthorizationFilter)
+            }
+
 
         }
 
