@@ -1,5 +1,7 @@
 package io.positivinh.virtuoso.web.security.autoconfigure.configuration
 
+import com.crabshue.commons.kotlin.logging.getLogger
+import io.positivinh.virtuoso.web.security.autoconfigure.filter.VirtuosoHeaderAuthorizationFilter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
@@ -30,6 +32,8 @@ import org.springframework.web.filter.OncePerRequestFilter
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 class SpringSecurityConfiguration {
 
+    private val log = getLogger()
+
     /**
      * Security filter chain configuration
      *
@@ -41,7 +45,8 @@ class SpringSecurityConfiguration {
     fun securityFilterChain(
         http: HttpSecurity,
         endpointAuthorizationConfigurationProperties: EndpointAuthorizationConfigurationProperties,
-        @Autowired(required = false) @Qualifier("authorizationFilter") authorizationFilter: OncePerRequestFilter?
+        @Autowired(required = false) @Qualifier("appAuthorizationFilter") authorizationFilter: OncePerRequestFilter?,
+        virtuosoHeaderAuthorizationFilter: VirtuosoHeaderAuthorizationFilter
     ): SecurityFilterChain {
 
         http {
@@ -68,8 +73,14 @@ class SpringSecurityConfiguration {
                 authorize(anyRequest, authenticated)
             }
 
-            // authentication filter
-            authorizationFilter?.let { addFilterAt<AuthorizationFilter>(it) }
+            // authentication filters
+            authorizationFilter?.let {
+                addFilterAt<AuthorizationFilter>(it)
+            }
+                .also { log.info("Registering Authorization Filter [{}]", it) }
+
+            addFilterAt<AuthorizationFilter>(virtuosoHeaderAuthorizationFilter)
+
         }
 
         return http.build()
