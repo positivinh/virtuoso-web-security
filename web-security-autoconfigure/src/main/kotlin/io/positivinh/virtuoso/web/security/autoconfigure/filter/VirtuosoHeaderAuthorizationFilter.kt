@@ -1,6 +1,7 @@
 package io.positivinh.virtuoso.web.security.autoconfigure.filter
 
 import com.crabshue.commons.kotlin.logging.getLogger
+import io.positivinh.virtuoso.web.security.autoconfigure.configuration.AuthorizationHeadersConfigurationProperties
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -13,14 +14,10 @@ import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
-class VirtuosoHeaderAuthorizationFilter : OncePerRequestFilter() {
+class VirtuosoHeaderAuthorizationFilter(val authorizationHeadersConfigurationProperties: AuthorizationHeadersConfigurationProperties) :
+    OncePerRequestFilter() {
 
     private val log = getLogger()
-
-    companion object {
-        const val VIRTUOSO_USERNAME_HEADER_NAME = "X-Virtuoso-Username"
-        const val VIRTUOSO_AUTHORITIES_HEADER_NAME = "X-Virtuoso-Authorities"
-    }
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -28,9 +25,9 @@ class VirtuosoHeaderAuthorizationFilter : OncePerRequestFilter() {
         filterChain: FilterChain
     ) {
 
-        val username = request.getHeader(VIRTUOSO_USERNAME_HEADER_NAME)
+        val username = request.getHeader(authorizationHeadersConfigurationProperties.username)
 
-        val authorities = request.getHeader(VIRTUOSO_AUTHORITIES_HEADER_NAME)?.split(";")
+        val authorities = request.getHeader(authorizationHeadersConfigurationProperties.authorities)?.split(";")
 
         val simpleGrantedAuthorities = authorities?.map { SimpleGrantedAuthority(it.trim()) } ?: listOf()
 
