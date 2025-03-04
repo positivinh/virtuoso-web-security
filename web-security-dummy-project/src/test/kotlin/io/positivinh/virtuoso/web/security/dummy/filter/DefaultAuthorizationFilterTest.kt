@@ -10,11 +10,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 @SpringBootTest
-//@Import(TestConfig::class)
 @TestPropertySource(
     properties = [
         "debug=true",
-        "dummy.authorization.filter.enabled=false"
+        "dummy.authorization.filter.enabled=false",
+        "virtuoso.web.security.authorization.headers.username=X-Dummy-Username",
+        "virtuoso.web.security.authorization.headers.authorities=X-Dummy-Authorities"
     ]
 )
 @AutoConfigureMockMvc
@@ -31,7 +32,7 @@ class DefaultAuthorizationFilterTest {
 
         mvc.perform(
             MockMvcRequestBuilders.get("/api/dummy")
-                .header("X-Virtuoso-Username", "user")
+                .header("X-Dummy-Username", "user")
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
 
@@ -47,23 +48,14 @@ class DefaultAuthorizationFilterTest {
 
         mvc.perform(
             MockMvcRequestBuilders.get("/api/dummy/with-permission/ok")
-                .header("X-Virtuoso-Username", "user")
+                .header("X-Dummy-Username", "user")
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
 
         mvc.perform(
             MockMvcRequestBuilders.get("/api/dummy/with-permission/nok")
-                .header("X-Virtuoso-Username", "user")
+                .header("X-Dummy-Username", "user")
         )
             .andExpect(MockMvcResultMatchers.status().isForbidden)
     }
 }
-
-//@TestConfiguration
-//@ComponentScan(
-//    excludeFilters = [ComponentScan.Filter(
-//        type = FilterType.ASSIGNABLE_TYPE,
-//        classes = [AuthorizationFilter::class]
-//    )]
-//)
-//class TestConfig {}
