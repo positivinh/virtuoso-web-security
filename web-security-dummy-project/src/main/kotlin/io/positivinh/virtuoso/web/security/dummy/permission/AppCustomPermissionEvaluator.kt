@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 import java.io.Serializable
 
 @Component("appCustomPermissionEvaluator")
-class AppCustomerPermissionEvaluator : PermissionEvaluator {
+class AppCustomPermissionEvaluator : PermissionEvaluator {
 
     override fun hasPermission(
         authentication: Authentication?,
