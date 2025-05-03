@@ -5,6 +5,7 @@ import io.positivinh.virtuoso.web.security.autoconfigure.filter.VirtuosoHeaderAu
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -41,6 +42,7 @@ class SpringSecurityConfiguration {
      * See [Actuator security configuration](https://docs.spring.io/spring-boot/reference/actuator/endpoints.html#actuator.endpoints.security)
      *
      */
+    @ConditionalOnWebApplication
     @Bean
     fun securityFilterChain(
         http: HttpSecurity,
@@ -94,6 +96,7 @@ class SpringSecurityConfiguration {
      *
      * See [Reference documentation](https://docs.spring.io/spring-security/reference/reactive/integrations/cors.html)
      */
+    @ConditionalOnWebApplication
     @Bean
     fun corsConfigurationSource(corsConfigurationProperties: CorsConfigurationProperties): CorsConfigurationSource {
 
