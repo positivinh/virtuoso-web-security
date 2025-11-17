@@ -5,17 +5,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.positivinh.virtuoso</groupId>
+        <groupId>io.github.positivinh.virtuoso</groupId>
         <artifactId>virtuoso-spring-boot-parent</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.2.0</version>
         <relativePath/>
     </parent>
 
-    <groupId>io.positivinh.virtuoso.web</groupId>
+    <groupId>io.github.positivinh.virtuoso.web</groupId>
     <artifactId>virtuoso-web-security</artifactId>
     <version>1.2.0-SNAPSHOT</version>
+    <name>Virtuoso web security</name>
     <description>Software factory components for web security</description>
     <packaging>pom</packaging>
+    <url>https://maven.pkg.github.com/positivinh/virtuoso-web-security</url>
 
     <modules>
         <module>web-security-autoconfigure</module>
@@ -44,4 +46,10 @@
             <url>https://maven.pkg.github.com/positivinh/virtuoso-web-security</url>
         </repository>
     </distributionManagement>
+
+    <scm>
+        <url>https://github.com/positivinh/virtuoso-web-security</url>
+        <tag>HEAD</tag>
+        <connection>scm:git:https://github.com/positivinh/virtuoso-web-security</connection>
+    </scm>
 </project>
