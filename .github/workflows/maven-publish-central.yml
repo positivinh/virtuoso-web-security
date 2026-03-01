@@ -6,8 +6,6 @@ name: Publish to Maven Central
 on:
   push:
     branches:
-      - develop
-      - 'ci/**'
       - 'release/**'
 
   release:
