@@ -9,19 +9,19 @@ import java.io.Serializable
 class AppCustomPermissionEvaluator : PermissionEvaluator {
 
     override fun hasPermission(
-        authentication: Authentication?,
-        targetDomainObject: Any?,
-        permission: Any?
+        authentication: Authentication,
+        targetDomainObject: Any,
+        permission: Any
     ): Boolean {
 
         return targetDomainObject == "ok" && permission == "read"
     }
 
     override fun hasPermission(
-        authentication: Authentication?,
-        targetId: Serializable?,
-        targetType: String?,
-        permission: Any?
+        authentication: Authentication,
+        targetId: Serializable,
+        targetType: String,
+        permission: Any
     ): Boolean {
         TODO("Not yet implemented")
     }
