@@ -10,7 +10,7 @@ class AppCustomPermissionEvaluator : PermissionEvaluator {
 
     override fun hasPermission(
         authentication: Authentication,
-        targetDomainObject: Any,
+        targetDomainObject: Any?,
         permission: Any
     ): Boolean {
 
