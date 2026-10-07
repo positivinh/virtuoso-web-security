@@ -4,15 +4,11 @@ import com.crabshue.commons.kotlin.logging.getLogger
 import io.positivinh.virtuoso.web.security.autoconfigure.filter.VirtuosoHeaderAuthorizationFilter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
-import org.springframework.security.access.PermissionEvaluator
-import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler
-import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
@@ -30,7 +26,6 @@ import org.springframework.web.filter.OncePerRequestFilter
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 class SpringSecurityConfiguration {
 
     private val log = getLogger()
@@ -57,8 +52,13 @@ class SpringSecurityConfiguration {
             csrf { disable() }
 
             // endpoint authorizations
+            // first matching rule wins: deny rules come first so a broader permit-all cannot override them
             authorizeHttpRequests {
 
+                endpointAuthorizationConfigurationProperties.denyAll.forEach {
+                    it.method?.let { method -> authorize(HttpMethod.valueOf(method), it.pattern, denyAll) }
+                        ?: authorize(it.pattern, denyAll)
+                }
                 endpointAuthorizationConfigurationProperties.permitAll.forEach {
                     it.method?.let { method -> authorize(HttpMethod.valueOf(method), it.pattern, permitAll) }
                         ?: authorize(it.pattern, permitAll)
@@ -67,20 +67,16 @@ class SpringSecurityConfiguration {
                     it.method?.let { method -> authorize(HttpMethod.valueOf(method), it.pattern, authenticated) }
                         ?: authorize(it.pattern, authenticated)
                 }
-                endpointAuthorizationConfigurationProperties.denyAll.forEach {
-                    it.method?.let { method -> authorize(HttpMethod.valueOf(method), it.pattern, denyAll) }
-                        ?: authorize(it.pattern, denyAll)
-                }
 
                 authorize(anyRequest, authenticated)
             }
 
-            // authentication filter
+            // authentication filter: must populate the security context before authorization is checked
             if (authorizationFilter != null) {
-                addFilterAt<AuthorizationFilter>(authorizationFilter)
+                addFilterBefore<AuthorizationFilter>(authorizationFilter)
                 log.info("Registering Authorization Filter [{}]", authorizationFilter)
             } else {
-                addFilterAt<AuthorizationFilter>(virtuosoHeaderAuthorizationFilter)
+                addFilterBefore<AuthorizationFilter>(virtuosoHeaderAuthorizationFilter)
                 log.info("Registering Virtuoso header authorization filter [{}]", virtuosoHeaderAuthorizationFilter)
 
             }
@@ -89,6 +85,20 @@ class SpringSecurityConfiguration {
         }
 
         return http.build()
+    }
+
+    /**
+     * The header filter is a bean, so Spring Boot would also register it in the servlet container,
+     * outside the security filter chain. It must only run inside the chain.
+     */
+    @ConditionalOnWebApplication
+    @Bean
+    fun virtuosoHeaderAuthorizationFilterRegistration(
+        virtuosoHeaderAuthorizationFilter: VirtuosoHeaderAuthorizationFilter
+    ): FilterRegistrationBean<VirtuosoHeaderAuthorizationFilter> {
+
+        return FilterRegistrationBean(virtuosoHeaderAuthorizationFilter)
+            .apply { isEnabled = false }
     }
 
     /**
@@ -111,17 +121,5 @@ class SpringSecurityConfiguration {
         source.registerCorsConfiguration(corsConfigurationProperties.pattern, corsConfiguration)
 
         return source
-    }
-
-
-    @Bean
-    @ConditionalOnBean(name = ["appCustomPermissionEvaluator"])
-    fun expressionHandler(@Qualifier("appCustomPermissionEvaluator") customPermissionEvaluator: PermissionEvaluator)
-            : MethodSecurityExpressionHandler {
-
-        val handler = DefaultMethodSecurityExpressionHandler()
-        handler.setPermissionEvaluator(customPermissionEvaluator)
-
-        return handler
     }
 }

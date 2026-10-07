@@ -6,7 +6,6 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
@@ -29,27 +28,24 @@ class VirtuosoHeaderAuthorizationFilter(val authorizationHeadersConfigurationPro
 
         val username = request.getHeader(authorizationHeadersConfigurationProperties.username)
 
-        val authorities = request.getHeader(authorizationHeadersConfigurationProperties.authorities)?.split(";")
+        val simpleGrantedAuthorities = request.getHeader(authorizationHeadersConfigurationProperties.authorities)
+            ?.split(";")
+            ?.map { it.trim() }
+            ?.filter { it.isNotEmpty() }
+            ?.map { SimpleGrantedAuthority(it) }
+            ?: listOf()
 
-        val simpleGrantedAuthorities = authorities?.map { SimpleGrantedAuthority(it.trim()) } ?: listOf()
-
-        username?.let {
-            SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-                User(username, "", simpleGrantedAuthorities),
+        username?.takeIf { it.isNotBlank() }?.let {
+            val contextHolderStrategy = SecurityContextHolder.getContextHolderStrategy()
+            val context = contextHolderStrategy.createEmptyContext()
+            context.authentication = PreAuthenticatedAuthenticationToken(
+                User(it, "", simpleGrantedAuthorities),
                 "",
                 simpleGrantedAuthorities
             )
-            SecurityContextHolder.getContextHolderStrategy().context.authentication =
-                PreAuthenticatedAuthenticationToken(
-                    User(username, "", simpleGrantedAuthorities),
-                    "",
-                    simpleGrantedAuthorities
-                )
+            contextHolderStrategy.context = context
 
-            log.debug(
-                "Authenticated [{}] via X-Virtuoso authentication headers",
-                SecurityContextHolder.getContext().authentication
-            )
+            log.debug("Authenticated [{}] via X-Virtuoso authentication headers", it)
         }
 
         filterChain.doFilter(request, response)
