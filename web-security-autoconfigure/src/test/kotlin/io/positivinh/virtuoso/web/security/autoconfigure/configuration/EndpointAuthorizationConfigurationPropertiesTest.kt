@@ -31,7 +31,10 @@ class EndpointAuthorizationConfigurationPropertiesTest {
 
         Assertions.assertThat(properties.permitAll).isNotEmpty()
         Assertions.assertThat(properties.permitAll)
-            .contains(Endpoint(name = "actuator", pattern = "/actuator/**", method = "GET"))
+            .containsExactly(
+                Endpoint(name = "actuator-health", pattern = "/actuator/health/**", method = "GET"),
+                Endpoint(name = "actuator-info", pattern = "/actuator/info", method = "GET"),
+            )
 
         Assertions.assertThat(properties.denyAll).isEmpty()
     }
