@@ -1,0 +1,25 @@
+# Builds every pull request to main, and builds and deploys to GitHub Packages on pushes to
+# the branches below. The steps live in the shared workflow in positivinh/virtuoso.
+
+name: CI
+
+on:
+  push:
+    branches: [ 'main*', 'develop*', 'ci/**', 'release/**' ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    uses: positivinh/virtuoso/.github/workflows/maven-build.yml@main
+    with:
+      java-version: '17'
+      deploy: ${{ github.event_name == 'push' }}

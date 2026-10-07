@@ -1,0 +1,27 @@
+# Publishes a GitHub release to Maven Central. Set the POM version to the release version
+# (no SNAPSHOT) before tagging: the tag must match it.
+
+name: Publish to Maven Central
+
+on:
+  release:
+    types: [ published ]
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    uses: positivinh/virtuoso/.github/workflows/maven-central.yml@main
+    with:
+      java-version: '17'
+    secrets:
+      gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+      gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      central-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+      central-token: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
