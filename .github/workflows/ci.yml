@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   build:
-    uses: positivinh/virtuoso/.github/workflows/maven-build.yml@main
+    uses: positivinh/virtuoso/.github/workflows/maven-build.yml@ci-stable
     with:
       java-version: '17'
       deploy: ${{ github.event_name == 'push' }}
