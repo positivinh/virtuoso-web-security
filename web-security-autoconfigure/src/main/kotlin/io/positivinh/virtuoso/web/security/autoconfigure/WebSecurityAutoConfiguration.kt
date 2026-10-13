@@ -1,6 +1,6 @@
 package io.positivinh.virtuoso.web.security.autoconfigure
 
-import io.positivinh.virtuoso.security.autoconfigure.configuration.MethodSecurityConfiguration
+import io.positivinh.virtuoso.authorization.autoconfigure.configuration.MethodSecurityConfiguration
 import io.positivinh.virtuoso.web.security.autoconfigure.configuration.AuthorizationHeadersConfigurationProperties
 import io.positivinh.virtuoso.web.security.autoconfigure.configuration.CorsConfigurationProperties
 import io.positivinh.virtuoso.web.security.autoconfigure.configuration.EndpointAuthorizationConfigurationProperties
@@ -15,7 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 @AutoConfiguration
 @ConditionalOnClass(EnableWebSecurity::class)
-// web security always comes with method security (virtuoso-security), also when this auto-configuration is imported
+// web security always comes with method security (virtuoso-authorization), also when this auto-configuration is imported
 // on its own, e.g. in a @WebMvcTest slice; otherwise @PreAuthorize would silently not apply
 @Import(
     SpringSecurityConfiguration::class,

@@ -10,7 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - **Breaking:** Spring Boot 4.1 and Spring Security 7.
-- **Breaking:** permission evaluation is delegated to `virtuoso-security`, which `web-security-starter` now includes.
+- **Breaking:** permission evaluation is delegated to `virtuoso-authorization`, which `web-security-starter` now
+  includes.
 - Authorization filter precedence and registration: it runs only inside the Spring Security chain.
 - Actuator endpoint exposure restricted.
 - Reusable CI workflows; versions come from the BOM.

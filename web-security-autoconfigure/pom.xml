@@ -14,8 +14,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.positivinh.virtuoso.security</groupId>
-            <artifactId>security-autoconfigure</artifactId>
+            <groupId>io.github.positivinh.virtuoso.authorization</groupId>
+            <artifactId>authorization-autoconfigure</artifactId>
             <version>${virtuoso.version}</version>
             <scope>provided</scope>
         </dependency>
